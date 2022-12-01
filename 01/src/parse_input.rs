@@ -13,5 +13,12 @@ pub fn read_file(file_name: &str) -> String {
 }
 
 pub fn parse(file: &String) -> ParseOutput {
-    return file.split("\n\n").map(|package| {package.lines().fold(0, |acc, item| acc + item.parse::<i32>().unwrap())}).collect();
+    return file
+        .split("\n\n")
+        .map(|package| {
+            package
+                .lines()
+                .fold(0, |acc, item| acc + item.parse::<i32>().unwrap())
+        })
+        .collect();
 }
