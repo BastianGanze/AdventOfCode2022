@@ -4,7 +4,7 @@ use crate::parse_input::{parse, read_main, ParseOutput};
 
 pub mod parse_input;
 
-type Solution = u32;
+type Solution = i32;
 
 fn main() {
     let parse_output = parse(&read_main());
@@ -13,11 +13,14 @@ fn main() {
 }
 
 fn part_1(parse_output: &ParseOutput) -> Solution {
-    todo!()
+    return parse_output.clone().into_iter().max().unwrap();
 }
 
 fn part_2(parse_output: &ParseOutput) -> Solution {
-    todo!()
+    let mut solution_vec = parse_output.clone();
+    solution_vec.sort();
+
+    return solution_vec.iter().rev().take(3).sum();
 }
 
 #[cfg(test)]
@@ -30,13 +33,13 @@ mod tests {
     #[test]
     pub fn test_part_1() {
         let parse_output = parse(&read_test());
-        assert_eq!(part_1(&parse_output), 1656);
+        assert_eq!(part_1(&parse_output), 24000);
     }
 
     #[test]
     pub fn test_part_2() {
         let parse_output = parse(&read_test());
-        assert_eq!(part_2(&parse_output), 195);
+        assert_eq!(part_2(&parse_output), 45000);
     }
 
     #[bench]
@@ -51,7 +54,7 @@ mod tests {
     fn bench_part_1(b: &mut Bencher) {
         let parse_output = parse(&read_main());
         b.iter(move || {
-            assert_eq!(part_1(black_box(&parse_output)), 1620);
+            assert_eq!(part_1(black_box(&parse_output)), 68442);
         });
     }
 
@@ -59,7 +62,7 @@ mod tests {
     fn bench_part_2(b: &mut Bencher) {
         let parse_output = parse(&read_main());
         b.iter(|| {
-            assert_eq!(part_2(black_box(&parse_output)), 371);
+            assert_eq!(part_2(black_box(&parse_output)), 204837);
         });
     }
 }

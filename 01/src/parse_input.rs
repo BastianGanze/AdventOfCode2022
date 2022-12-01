@@ -1,4 +1,4 @@
-pub type ParseOutput = Vec<String>;
+pub type ParseOutput = Vec<i32>;
 
 pub fn read_main() -> String {
     read_file("src/01.txt")
@@ -13,5 +13,5 @@ pub fn read_file(file_name: &str) -> String {
 }
 
 pub fn parse(file: &String) -> ParseOutput {
-    todo!()
+    return file.split("\n\n").map(|package| {package.lines().fold(0, |acc, item| acc + item.parse::<i32>().unwrap())}).collect();
 }
