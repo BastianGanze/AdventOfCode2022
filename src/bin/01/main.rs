@@ -5,6 +5,16 @@ pub type ParseOutput = Vec<i32>;
 const MAIN_INPUT: &str = include_str!("main_input");
 const TEST_INPUT: &str = include_str!("test_input");
 
+pub fn parse(file: &str) -> ParseOutput {
+    file.split("\n\n")
+        .map(|package| {
+            package
+                .lines()
+                .fold(0, |acc, item| acc + item.parse::<i32>().unwrap())
+        })
+        .collect()
+}
+
 fn part_1(parse_output: &ParseOutput) -> Solution {
     parse_output.clone().into_iter().max().unwrap()
 }
@@ -62,14 +72,4 @@ mod tests {
             assert_eq!(part_2(black_box(&parse_output)), 204837);
         });
     }
-}
-
-pub fn parse(file: &str) -> ParseOutput {
-    file.split("\n\n")
-        .map(|package| {
-            package
-                .lines()
-                .fold(0, |acc, item| acc + item.parse::<i32>().unwrap())
-        })
-        .collect()
 }
