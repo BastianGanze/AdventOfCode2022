@@ -38,17 +38,11 @@ fn part_1(parse_output: &ParseOutput) -> Solution {
 fn part_2(parse_output: &ParseOutput) -> Solution {
     let mut solution = 0;
     for r in parse_output {
-        if !((r.1.end < r.0.start || r.1.start > r.0.end)
-            || (r.0.end < r.1.start || r.0.start > r.1.end))
-        {
+        if !(r.1.end < r.0.start || r.1.start > r.0.end) {
             solution += 1;
         }
     }
     solution
-}
-
-fn overlap(r1: Range<u32>, r2: Range<u32>) -> bool {
-    (r2.end < r1.start || r2.start > r1.end)
 }
 
 fn main() {
