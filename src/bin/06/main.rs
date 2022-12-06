@@ -19,12 +19,12 @@ fn part_1(parse_output: &ParseOutput) -> Solution {
     b[3] = bytes.next().unwrap().1;
 
     for (i, byte) in bytes {
-        if b[0] ^ b[1] == 0
-            || b[0] ^ b[2] == 0
-            || b[0] ^ b[3] == 0
-            || b[1] ^ b[2] == 0
-            || b[1] ^ b[3] == 0
-            || b[2] ^ b[3] == 0
+        if b[0] == b[1]
+            || b[0] == b[2]
+            || b[0] == b[3]
+            || b[1] == b[2]
+            || b[1] == b[3]
+            || b[2] == b[3]
         {
             b[0] = b[1];
             b[1] = b[2];
@@ -50,7 +50,7 @@ fn part_2(parse_output: &ParseOutput) -> Solution {
     'outer: for (i, byte) in bytes {
         for u in 0..14 {
             for v in (u + 1)..14 {
-                if b[u] ^ b[v] == 0 {
+                if b[u] == b[v] {
                     for x in 0..13 {
                         b[x] = b[x + 1];
                     }
