@@ -144,13 +144,13 @@ mod tests {
     #[test]
     pub fn test_part_1() {
         let parse_output = parse(TEST_INPUT);
-        assert_eq!(part_1(&parse_output), 7);
+        assert_eq!(part_1(&parse_output), 95437);
     }
 
     #[test]
     pub fn test_part_2() {
         let parse_output = parse(TEST_INPUT);
-        assert_eq!(part_2(&parse_output), 19);
+        assert_eq!(part_2(&parse_output), 24933642);
     }
 
     #[bench]
@@ -164,7 +164,7 @@ mod tests {
     fn bench_part_1(b: &mut Bencher) {
         let parse_output = parse(MAIN_INPUT);
         b.iter(move || {
-            assert_eq!(part_1(black_box(&parse_output)), 1542);
+            assert_eq!(part_1(black_box(&parse_output)), 1513699);
         });
     }
 
@@ -172,7 +172,7 @@ mod tests {
     fn bench_part_2(b: &mut Bencher) {
         let parse_output = parse(MAIN_INPUT);
         b.iter(|| {
-            assert_eq!(part_2(black_box(&parse_output)), 3153);
+            assert_eq!(part_2(black_box(&parse_output)), 7991939);
         });
     }
 }
