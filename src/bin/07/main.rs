@@ -35,45 +35,32 @@ pub fn parse(file: &str) -> ParseOutput {
     let mut current_dir_i: usize = 0;
 
     for l in file.lines() {
-        let mut command_elements = l.split(' ');
-        let first = command_elements.next().unwrap();
-        let second = command_elements.next().unwrap();
+        let command_elements: Vec<&str> = l.split_ascii_whitespace().collect();
 
-        match first {
-            "$" => match second {
-                "cd" => {
-                    let third = command_elements.next().unwrap();
-                    match third {
-                        ".." => {
-                            if let Some(current_dir) = filesystem.get_mut(current_dir_i) {
-                                current_dir_i = current_dir.parent;
-                            }
-                        }
-                        dir => {
-                            filesystem.push(FileSystemEntry::new(
-                                true,
-                                dir.into(),
-                                0,
-                                current_dir_i,
-                            ));
-                            current_dir_i = filesystem.len() - 1;
-                        }
-                    }
+        match command_elements[..] {
+            ["$", "cd", ".."] => {
+                if let Some(current_dir) = filesystem.get_mut(current_dir_i) {
+                    current_dir_i = current_dir.parent;
                 }
-                _ => unreachable!(),
-            },
-            "dir" => {}
-            size => {
+            }
+            ["$", "cd", dir] => {
+                filesystem.push(FileSystemEntry::new(true, dir.into(), 0, current_dir_i));
+                current_dir_i = filesystem.len() - 1;
+            }
+            ["$", "ls"] => {}
+            ["dir", _] => {}
+            [size, file_name] => {
                 let file_size = size.parse().unwrap();
                 update_parent_file_sizes(&mut filesystem, current_dir_i, file_size);
 
                 filesystem.push(FileSystemEntry::new(
                     false,
-                    second.into(),
+                    file_name.into(),
                     file_size,
                     current_dir_i,
                 ));
             }
+            _ => {}
         }
     }
 
