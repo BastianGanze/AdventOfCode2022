@@ -8,7 +8,6 @@ type Solution = u64;
 pub struct FileSystemEntry {
     is_dir: bool,
     file_name: String,
-    children: Vec<usize>,
     parent: usize,
     size: u64,
 }
@@ -18,7 +17,6 @@ impl FileSystemEntry {
         FileSystemEntry {
             is_dir,
             file_name: name,
-            children: Vec::new(),
             parent,
             size,
         }
@@ -52,11 +50,6 @@ pub fn parse(file: &str) -> ParseOutput {
                             }
                         }
                         dir => {
-                            let file_system_i = filesystem.len();
-                            if let Some(current_dir) = filesystem.get_mut(current_dir_i) {
-                                current_dir.children.push(file_system_i);
-                            }
-
                             filesystem.push(FileSystemEntry::new(
                                 true,
                                 dir.into(),
@@ -67,17 +60,11 @@ pub fn parse(file: &str) -> ParseOutput {
                         }
                     }
                 }
-                "ls" => {}
                 _ => unreachable!(),
             },
             "dir" => {}
             size => {
                 let file_size = size.parse().unwrap();
-                let file_system_i = filesystem.len();
-
-                let current_dir = filesystem.get_mut(current_dir_i).unwrap();
-                current_dir.children.push(file_system_i);
-
                 update_parent_file_sizes(&mut filesystem, current_dir_i, file_size);
 
                 filesystem.push(FileSystemEntry::new(
@@ -93,11 +80,7 @@ pub fn parse(file: &str) -> ParseOutput {
     filesystem
 }
 
-fn update_parent_file_sizes(
-    filesystem: &mut Vec<FileSystemEntry>,
-    current_dir_i: usize,
-    size: u64,
-) {
+fn update_parent_file_sizes(filesystem: &mut [FileSystemEntry], current_dir_i: usize, size: u64) {
     let mut cd_i = current_dir_i;
     while cd_i != 0 {
         let current_dir = filesystem.get_mut(cd_i).unwrap();
