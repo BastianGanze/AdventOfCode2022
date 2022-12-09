@@ -30,7 +30,7 @@ pub fn parse(file: &str) -> ParseOutput {
 }
 
 fn part_1(parse_output: &ParseOutput) -> Solution {
-    let mut visited_map = HashSet::new();
+    let mut visited_map = HashSet::with_capacity(10000);
 
     let mut head_x: i32 = 0;
     let mut head_y: i32 = 0;
@@ -86,7 +86,7 @@ fn part_2(parse_output: &ParseOutput) -> Solution {
         (0, 0),
         (0, 0),
     ];
-    let mut visited_map = HashSet::new();
+    let mut visited_map = HashSet::with_capacity(10000);
 
     for m in parse_output {
         match m {
@@ -120,7 +120,7 @@ fn part_2(parse_output: &ParseOutput) -> Solution {
     visited_map.len() as i32
 }
 
-fn move_tails(mut parts: &mut Vec<(i32, i32)>, visited_map: &mut HashSet<(i32, i32)>) {
+fn move_tails(parts: &mut [(i32, i32)], visited_map: &mut HashSet<(i32, i32)>) {
     for i in 1..10 {
         (parts[i].0, parts[i].1) = move_tail(parts[i - 1].0, parts[i - 1].1, parts[i].0, parts[i].1)
     }
@@ -130,24 +130,10 @@ fn move_tails(mut parts: &mut Vec<(i32, i32)>, visited_map: &mut HashSet<(i32, i
 fn move_tail(head_x: i32, head_y: i32, tail_x: i32, tail_y: i32) -> (i32, i32) {
     let diff_x = head_x - tail_x;
     let diff_y = head_y - tail_y;
-
-    if diff_x.abs() < 2 && diff_y.abs() < 2 {
-        return (tail_x, tail_y);
+    match (diff_x, diff_y) {
+        (-1 | 0 | 1, -1 | 0 | 1) => (tail_x, tail_y),
+        _ => (tail_x + diff_x.signum(), tail_y + diff_y.signum()),
     }
-
-    let dir_x = match diff_x.cmp(&0) {
-        std::cmp::Ordering::Less => -1,
-        std::cmp::Ordering::Equal => 0,
-        std::cmp::Ordering::Greater => 1,
-    };
-
-    let dir_y = match diff_y.cmp(&0) {
-        std::cmp::Ordering::Less => -1,
-        std::cmp::Ordering::Equal => 0,
-        std::cmp::Ordering::Greater => 1,
-    };
-
-    (tail_x + dir_x, tail_y + dir_y)
 }
 
 fn main() {
