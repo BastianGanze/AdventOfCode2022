@@ -1,6 +1,6 @@
 #![feature(test)]
 
-use std::collections::{BTreeSet, VecDeque};
+use std::collections::BTreeSet;
 
 type Solution = u64;
 
@@ -12,7 +12,7 @@ pub enum Operation {
 }
 #[derive(Debug, Clone)]
 pub struct Monkey {
-    pub items: VecDeque<u64>,
+    pub items: Vec<u64>,
     pub operation: Operation,
     pub divisible_test: u64,
     pub true_monkey: usize,
@@ -26,7 +26,7 @@ pub fn parse(file: &str) -> ParseOutput {
     file.split("\n\n")
         .map(|m| {
             let mut monkey = Monkey {
-                items: VecDeque::new(),
+                items: Vec::new(),
                 operation: Operation::Multiply(0),
                 false_monkey: 0,
                 true_monkey: 0,
@@ -63,7 +63,7 @@ pub fn parse(file: &str) -> ParseOutput {
                         if u[0] == "Starting" {
                             for item in u[2..].iter() {
                                 let n = item.replace(',', "").parse().unwrap();
-                                monkey.items.push_back(n);
+                                monkey.items.push(n);
                             }
                         } else {
                             unreachable!();
@@ -101,12 +101,9 @@ fn monkey_throws<F: FnMut(u64) -> u64>(
     for _ in 0..count {
         for i in 0..monkeys.len() {
             let monkey = &mut monkeys[i];
-            while !monkey.items.is_empty() {
+            for item in monkey.items.drain(..) {
                 monkey.inspections += 1;
-                let stress_level = calm_down(get_stress_level(
-                    monkey.items.pop_front().unwrap(),
-                    &monkey.operation,
-                ));
+                let stress_level = calm_down(get_stress_level(item, &monkey.operation));
                 if stress_level % monkey.divisible_test == 0 {
                     throws.push((monkey.true_monkey, stress_level));
                 } else {
@@ -114,7 +111,7 @@ fn monkey_throws<F: FnMut(u64) -> u64>(
                 }
             }
             for (m_i, item) in throws.drain(..) {
-                monkeys[m_i].items.push_back(item);
+                monkeys[m_i].items.push(item);
             }
         }
     }
