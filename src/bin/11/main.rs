@@ -1,6 +1,6 @@
 #![feature(test)]
 
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
+use std::collections::{BTreeSet, VecDeque};
 
 type Solution = u64;
 
@@ -77,22 +77,22 @@ pub fn parse(file: &str) -> ParseOutput {
 }
 
 fn part_1(parse_output: &ParseOutput) -> Solution {
-    monkey_throw(parse_output.clone(), 20, |item_level| item_level / 3)
+    monkey_throws(parse_output.clone(), 20, |item_level| item_level / 3)
 }
 
 fn part_2(parse_output: &ParseOutput) -> Solution {
-    let relief: u64 = parse_output
+    let relief = parse_output
         .iter()
         .map(|m| m.divisible_test)
         .reduce(|acc, d| acc * d)
         .unwrap();
 
-    monkey_throw(parse_output.clone(), 10000, |item_level| {
+    monkey_throws(parse_output.clone(), 10000, |item_level| {
         item_level % relief
     })
 }
 
-fn monkey_throw<F: FnMut(u64) -> u64>(
+fn monkey_throws<F: FnMut(u64) -> u64>(
     mut monkeys: ParseOutput,
     count: usize,
     mut calm_down: F,
@@ -103,14 +103,14 @@ fn monkey_throw<F: FnMut(u64) -> u64>(
             let monkey = &mut monkeys[i];
             while !monkey.items.is_empty() {
                 monkey.inspections += 1;
-                let item_level = calm_down(get_item_level(
+                let stress_level = calm_down(get_stress_level(
                     monkey.items.pop_front().unwrap(),
                     &monkey.operation,
                 ));
-                if item_level % monkey.divisible_test == 0 {
-                    throws.push((monkey.true_monkey, item_level));
+                if stress_level % monkey.divisible_test == 0 {
+                    throws.push((monkey.true_monkey, stress_level));
                 } else {
-                    throws.push((monkey.false_monkey, item_level))
+                    throws.push((monkey.false_monkey, stress_level))
                 }
             }
             for (m_i, item) in throws.drain(..) {
@@ -127,7 +127,7 @@ fn monkey_throw<F: FnMut(u64) -> u64>(
         .unwrap()
 }
 
-fn get_item_level(item: u64, operation: &Operation) -> u64 {
+fn get_stress_level(item: u64, operation: &Operation) -> u64 {
     match operation {
         Operation::Pow => item * item,
         Operation::Add(n) => item + n,
