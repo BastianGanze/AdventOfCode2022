@@ -2,10 +2,9 @@
 
 pub mod grid;
 
-use crate::grid::{manhattan_distance, Field, Grid};
+use crate::grid::{manhattan_distance, CostType, Field, Grid};
 use std::cmp::min;
 use std::collections::BinaryHeap;
-use std::iter::zip;
 
 type Solution = u32;
 type ParseOutput = (Grid, (usize, usize), (usize, usize));
@@ -31,7 +30,7 @@ pub fn parse(file: &str) -> ParseOutput {
                         end = (y, x);
                         25
                     }
-                    c => c as u32 - 97,
+                    c => c as CostType - 97,
                 },
             );
         }
@@ -63,7 +62,7 @@ fn part_2(parse_output: &ParseOutput) -> Solution {
     fastest
 }
 
-fn calc_fastest_path(mut out: ParseOutput) -> Solution {
+fn calc_fastest_path(out: ParseOutput) -> Solution {
     let (mut grid, start_coord, end_coords) = out;
     let mut open_fields = BinaryHeap::<Field>::new();
     let start = Field::new(start_coord, 0, 0);
@@ -102,11 +101,11 @@ fn calc_fastest_path(mut out: ParseOutput) -> Solution {
 }
 
 fn calc_cost(
-    field: &((usize, usize), u32),
-    neighbour: (usize, usize, u32),
+    field: &((usize, usize), CostType),
+    neighbour: (usize, usize, CostType),
     end: &(usize, usize),
 ) -> u32 {
-    if (neighbour.2 as i32 - field.1 as i32) > 1 {
+    if (neighbour.2 - field.1) > 1 {
         return u32::MAX;
     }
 

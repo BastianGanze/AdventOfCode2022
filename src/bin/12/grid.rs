@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-pub type CostType = u32;
+pub type CostType = i8;
 pub type MaskType = bool;
 
 #[derive(Debug, Clone)]
@@ -17,7 +17,7 @@ impl Grid {
     pub fn new(size: (usize, usize)) -> Grid {
         Grid {
             fields: vec![vec![(0, false); size.1]; size.0],
-            size: size.clone(),
+            size,
         }
     }
 
