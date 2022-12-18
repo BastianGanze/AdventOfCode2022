@@ -52,9 +52,9 @@ fn part_2(cubes: &ParseOutput) -> Sol {
 
     let air = get_air(cubes, &min_cube, &max_cube);
     let mut holes = HashSet::new();
-    for z in min_cube.0 - 1..=max_cube.0 + 1 {
-        for y in min_cube.1 - 1..=max_cube.1 + 1 {
-            for x in min_cube.2 - 1..=max_cube.2 + 1 {
+    for z in min_cube.0..=max_cube.0 {
+        for y in min_cube.1..=max_cube.1 {
+            for x in min_cube.2..=max_cube.2 {
                 if !air.contains(&(z, y, x)) && !cubes.contains(&(z, y, x)) {
                     holes.insert((z, y, x));
                 }
