@@ -125,15 +125,19 @@ fn part_1(blueprints: &ParseOutput) -> Sol {
     blueprints
         .iter()
         .enumerate()
-        .map(|(i, blueprint)| (i as Sol + 1) * get_max_geo(blueprint))
+        .map(|(i, blueprint)| (i as Sol + 1) * get_max_geo(blueprint, 24))
         .sum()
 }
 
 fn part_2(blueprints: &ParseOutput) -> Sol {
-    blueprints.iter().take(3).map(get_max_geo).product()
+    blueprints
+        .iter()
+        .take(3)
+        .map(|blueprint| get_max_geo(blueprint, 32))
+        .product()
 }
 
-fn get_max_geo(blueprint: &Blueprint) -> Sol {
+fn get_max_geo(blueprint: &Blueprint, max_minutes: Sol) -> Sol {
     let mut visited_states = HashSet::new();
     let mut possible_simulation_states: Vec<SimulationState> = vec![SimulationState::default()];
     let mut max_geos: Sol = 0;
@@ -144,20 +148,15 @@ fn get_max_geo(blueprint: &Blueprint) -> Sol {
         .max(blueprint.geo_rob_ore_cost);
     let max_clay_robs = blueprint.obs_rob_clay_cost;
     let max_obs_robs = blueprint.geo_rob_obs_cost;
-    let mut c: u64 = 0;
-    let mut max_state = SimulationState::default();
     while let Some(mut state) = possible_simulation_states.pop() {
         if visited_states.contains(&state) {
             continue;
         }
-
         visited_states.insert(state.clone());
 
-        c += 1;
-        if state.minute == 24 {
+        if state.minute == max_minutes {
             if state.geo > max_geos {
                 max_geos = state.geo;
-                max_state = state;
             }
             continue;
         }
@@ -188,6 +187,7 @@ fn get_max_geo(blueprint: &Blueprint) -> Sol {
             possible_simulation_states.push(state);
         }
     }
+    println!("{}", max_geos);
 
     max_geos
 }
@@ -202,13 +202,13 @@ mod tests {
     #[test]
     pub fn test_part_1() {
         let parse_output = parse(TEST_INPUT);
-        assert_eq!(part_1(&parse_output), 64);
+        assert_eq!(part_1(&parse_output), 33);
     }
 
     #[test]
     pub fn test_part_2() {
         let parse_output = parse(TEST_INPUT);
-        assert_eq!(part_2(&parse_output), 58);
+        assert_eq!(part_2(&parse_output), 3472);
     }
 
     #[bench]
@@ -230,7 +230,7 @@ mod tests {
     fn bench_part_2(b: &mut Bencher) {
         let parse_output = parse(MAIN_INPUT);
         b.iter(|| {
-            assert_eq!(part_2(black_box(&parse_output)), 2456);
+            assert_eq!(part_2(black_box(&parse_output)), 21840);
         });
     }
 }
