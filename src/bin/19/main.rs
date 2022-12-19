@@ -130,12 +130,7 @@ fn part_1(blueprints: &ParseOutput) -> Sol {
 }
 
 fn part_2(blueprints: &ParseOutput) -> Sol {
-    blueprints
-        .iter()
-        .take(3)
-        .enumerate()
-        .map(|(i, blueprint)| (i as Sol + 1) * get_max_geo(blueprint))
-        .product()
+    blueprints.iter().take(3).map(get_max_geo).product()
 }
 
 fn get_max_geo(blueprint: &Blueprint) -> Sol {
