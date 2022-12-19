@@ -122,127 +122,79 @@ fn main() {
 }
 
 fn part_1(blueprints: &ParseOutput) -> Sol {
-    let mut solution = 0;
-    let mut visited_states = HashSet::new();
-
-    for (i, blueprint) in blueprints.iter().enumerate() {
-        visited_states.clear();
-        let mut possible_simulation_states: Vec<SimulationState> = vec![SimulationState::default()];
-        let mut max_geos: Sol = 0;
-        let max_ore_robs = blueprint
-            .ore_rob_ore_cost
-            .max(blueprint.clay_rob_ore_cost)
-            .max(blueprint.obs_rob_ore_cost)
-            .max(blueprint.geo_rob_ore_cost);
-        let max_clay_robs = blueprint.obs_rob_clay_cost;
-        let max_obs_robs = blueprint.geo_rob_obs_cost;
-        let mut c: u64 = 0;
-        let mut max_state = SimulationState::default();
-        while let Some(mut state) = possible_simulation_states.pop() {
-            if !visited_states.insert(state.clone()) {
-                continue;
-            }
-            c += 1;
-            if state.minute == 24 {
-                if state.geo > max_geos {
-                    max_geos = state.geo;
-                    max_state = state;
-                }
-                continue;
-            }
-            state.minute += 1;
-
-            if state.ore_robs < max_ore_robs {
-                if let Some(n) = state.build_ore_rob(blueprint) {
-                    possible_simulation_states.push(n);
-                }
-            }
-
-            if state.clay_robs < max_clay_robs {
-                if let Some(n) = state.build_clay_rob(blueprint) {
-                    possible_simulation_states.push(n);
-                }
-            }
-
-            if state.obs_robs < max_obs_robs {
-                if let Some(n) = state.build_obs_rob(blueprint) {
-                    possible_simulation_states.push(n);
-                }
-            }
-
-            if let Some(n) = state.build_geo_rob(blueprint) {
-                possible_simulation_states.push(n);
-            } else {
-                state.advance_factory();
-                possible_simulation_states.push(state);
-            }
-        }
-        println!("{} {} {:?}", max_geos, c, max_state);
-        solution += (i as Sol + 1) * max_geos;
-    }
-    solution
+    blueprints
+        .iter()
+        .enumerate()
+        .map(|(i, blueprint)| (i as Sol + 1) * get_max_geo(blueprint))
+        .sum()
 }
 
 fn part_2(blueprints: &ParseOutput) -> Sol {
-    let mut solution = 1;
+    blueprints
+        .iter()
+        .take(3)
+        .enumerate()
+        .map(|(i, blueprint)| (i as Sol + 1) * get_max_geo(blueprint))
+        .product()
+}
+
+fn get_max_geo(blueprint: &Blueprint) -> Sol {
     let mut visited_states = HashSet::new();
-    for blueprint in blueprints.iter().take(3) {
-        visited_states.clear();
-        let mut possible_simulation_states: Vec<SimulationState> = vec![SimulationState::default()];
-        let mut max_geos: Sol = 0;
-        let max_ore_robs = blueprint
-            .ore_rob_ore_cost
-            .max(blueprint.clay_rob_ore_cost)
-            .max(blueprint.obs_rob_ore_cost)
-            .max(blueprint.geo_rob_ore_cost);
-        let max_clay_robs = blueprint.obs_rob_clay_cost;
-        let max_obs_robs = blueprint.geo_rob_obs_cost;
-        let mut c: u64 = 0;
-        let mut max_state = SimulationState::default();
-        while let Some(mut state) = possible_simulation_states.pop() {
-            if !visited_states.insert(state.clone()) {
-                continue;
-            }
-            c += 1;
-            if state.minute == 32 {
-                if state.geo > max_geos {
-                    max_geos = state.geo;
-                    max_state = state;
-                }
-                continue;
-            }
-            state.minute += 1;
+    let mut possible_simulation_states: Vec<SimulationState> = vec![SimulationState::default()];
+    let mut max_geos: Sol = 0;
+    let max_ore_robs = blueprint
+        .ore_rob_ore_cost
+        .max(blueprint.clay_rob_ore_cost)
+        .max(blueprint.obs_rob_ore_cost)
+        .max(blueprint.geo_rob_ore_cost);
+    let max_clay_robs = blueprint.obs_rob_clay_cost;
+    let max_obs_robs = blueprint.geo_rob_obs_cost;
+    let mut c: u64 = 0;
+    let mut max_state = SimulationState::default();
+    while let Some(mut state) = possible_simulation_states.pop() {
+        if visited_states.contains(&state) {
+            continue;
+        }
 
-            if let Some(n) = state.build_geo_rob(blueprint) {
+        visited_states.insert(state.clone());
+
+        c += 1;
+        if state.minute == 24 {
+            if state.geo > max_geos {
+                max_geos = state.geo;
+                max_state = state;
+            }
+            continue;
+        }
+        state.minute += 1;
+
+        if state.ore_robs < max_ore_robs {
+            if let Some(n) = state.build_ore_rob(blueprint) {
                 possible_simulation_states.push(n);
-                continue;
             }
+        }
 
-            if state.ore_robs < max_ore_robs {
-                if let Some(n) = state.build_ore_rob(blueprint) {
-                    possible_simulation_states.push(n);
-                }
+        if state.clay_robs < max_clay_robs {
+            if let Some(n) = state.build_clay_rob(blueprint) {
+                possible_simulation_states.push(n);
             }
+        }
 
-            if state.clay_robs < max_clay_robs {
-                if let Some(n) = state.build_clay_rob(blueprint) {
-                    possible_simulation_states.push(n);
-                }
+        if state.obs_robs < max_obs_robs {
+            if let Some(n) = state.build_obs_rob(blueprint) {
+                possible_simulation_states.push(n);
             }
+        }
 
-            if state.obs_robs < max_obs_robs {
-                if let Some(n) = state.build_obs_rob(blueprint) {
-                    possible_simulation_states.push(n);
-                }
-            }
-
+        if let Some(n) = state.build_geo_rob(blueprint) {
+            possible_simulation_states.push(n);
+        } else {
             state.advance_factory();
             possible_simulation_states.push(state);
         }
-        println!("{} {} {:?}", max_geos, c, max_state);
-        solution *= max_geos;
     }
-    solution
+
+    max_geos
 }
 
 #[cfg(test)]
