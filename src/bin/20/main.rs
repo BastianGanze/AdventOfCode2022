@@ -23,21 +23,12 @@ fn part_1(parse_output: &ParseOutput) -> Sol {
     let n_len = mixed_numbers.len() as Sol;
     let mut o_num_i_to_mix_num_i: Vec<Sol> = (0..n_len).collect();
     let mut mix_num_i_to_o_num_i: Vec<Sol> = (0..n_len).collect();
-
     mix_numbers(
         &mut mixed_numbers,
         &mut o_num_i_to_mix_num_i,
         &mut mix_num_i_to_o_num_i,
     );
-
-    let index_0 = mixed_numbers
-        .iter()
-        .enumerate()
-        .find_map(|(i, n)| if *n == 0 { Some(i) } else { None })
-        .unwrap();
-    mixed_numbers[(index_0 + 1000) % mixed_numbers.len()]
-        + mixed_numbers[(index_0 + 2000) % mixed_numbers.len()]
-        + mixed_numbers[(index_0 + 3000) % mixed_numbers.len()]
+    extract_solution(&mixed_numbers)
 }
 
 fn part_2(parse_output: &ParseOutput) -> Sol {
@@ -45,7 +36,6 @@ fn part_2(parse_output: &ParseOutput) -> Sol {
     let n_len = mixed_numbers.len() as Sol;
     let mut o_num_i_to_mix_num_i: Vec<Sol> = (0..n_len).collect();
     let mut mix_num_i_to_o_num_i: Vec<Sol> = (0..n_len).collect();
-
     for _ in 0..10 {
         mix_numbers(
             &mut mixed_numbers,
@@ -53,7 +43,10 @@ fn part_2(parse_output: &ParseOutput) -> Sol {
             &mut mix_num_i_to_o_num_i,
         );
     }
+    extract_solution(&mixed_numbers)
+}
 
+fn extract_solution(mixed_numbers: &Vec<Sol>) -> Sol {
     let index_0 = mixed_numbers
         .iter()
         .enumerate()
@@ -67,7 +60,7 @@ fn part_2(parse_output: &ParseOutput) -> Sol {
 fn mix_numbers(
     mixed_numbers: &mut Vec<Sol>,
     o_num_i_to_mix_num_i: &mut Vec<Sol>,
-    mix_num_i_to_o_num_i: &mut Vec<Sol>,
+    mix_num_i_to_o_num_i: &mut [Sol],
 ) {
     let n_len = mixed_numbers.len() as Sol;
     for original_number_index in 0..n_len {
@@ -94,12 +87,8 @@ fn get_modulo_moves(moves: Sol, n_len: Sol) -> Sol {
     moves - ((moves / (n_len - 1)) * (n_len - 1))
 }
 
-fn get_i_d(idx: &Vec<Sol>, i: Sol) -> usize {
+fn get_i_d(idx: &[Sol], i: Sol) -> usize {
     idx[i as usize] as usize
-}
-
-fn get_n(idx: &Vec<Sol>, i: usize, m: Sol, d: &Sol) -> Sol {
-    idx[modulo(i as Sol + d, m) as usize]
 }
 
 fn modulo(s: Sol, o: Sol) -> Sol {
