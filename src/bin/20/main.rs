@@ -68,7 +68,6 @@ fn mix_numbers(
 
         let moves_to_make = get_modulo_moves(mixed_numbers[mix_number_i], n_len);
         let move_dir = moves_to_make.signum();
-
         for i in 0..moves_to_make.abs() {
             let mixed_number_i_1 = modulo(mix_number_i as Sol + (i * move_dir), n_len);
             let mixed_number_i_2 = modulo(mixed_number_i_1 + move_dir, n_len);
