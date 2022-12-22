@@ -124,8 +124,6 @@ fn part_2(monkeys: &ParseOutput) -> Sol {
     }
 
     if let Some(P2Sol::Operation(p1, p2, _)) = solution.remove("root") {
-        println!("{:?} {:?}", p1, p2);
-
         let mut monkey_n: Sol = 0;
         let mut unknown_o = p1.clone();
         if let P2Sol::Number(n) = p2.borrow() {
@@ -136,7 +134,6 @@ fn part_2(monkeys: &ParseOutput) -> Sol {
             unknown_o = p2;
         }
         println!("{} = {}", get_fun(*unknown_o), monkey_n);
-        //calculate_unknown_n(*unknown_o, monkey_n)
         0
     } else {
         0
@@ -148,65 +145,37 @@ fn get_fun(unknown: P2Sol) -> String {
         P2Sol::Unknown => "n".into(),
         P2Sol::Number(n) => format!("{}", n),
         P2Sol::Operation(p1, p2, op) => match op {
-            Operation::Add => format!("({}-{})", get_fun(*p1), get_fun(*p2)),
-            Operation::Sub => format!("({}+{})", get_fun(*p1), get_fun(*p2)),
-            Operation::Mult => format!("({}/{})", get_fun(*p1), get_fun(*p2)),
-            Operation::Div => format!("({}*{})", get_fun(*p1), get_fun(*p2)),
+            Operation::Add => format!("({}+{})", get_fun(*p1), get_fun(*p2)),
+            Operation::Sub => format!("({}-{})", get_fun(*p1), get_fun(*p2)),
+            Operation::Mult => format!("({}*{})", get_fun(*p1), get_fun(*p2)),
+            Operation::Div => format!("({}/{})", get_fun(*p1), get_fun(*p2)),
         },
     }
 }
 
 fn calculate_unknown_n(unknown: P2Sol, current_n: Sol) -> Sol {
     match unknown {
-        P2Sol::Unknown => {
-            print!("NANI");
-            current_n
-        }
+        P2Sol::Unknown => current_n,
         P2Sol::Number(_) => unreachable!(),
         P2Sol::Operation(p1, p2, op) => {
-            println!("current_n {}", current_n);
             if let P2Sol::Number(n) = *p1 {
                 calculate_unknown_n(
                     *p2,
                     match op {
-                        Operation::Add => {
-                            println!("{} - {} = {}", current_n, n, current_n - n);
-                            current_n - n
-                        }
-                        Operation::Sub => {
-                            println!("{} + {} = {}", current_n, n, current_n + n);
-                            current_n + n
-                        }
-                        Operation::Mult => {
-                            println!("{} / {} = {}", current_n, n, current_n / n);
-                            current_n / n
-                        }
-                        Operation::Div => {
-                            println!("{} * {} = {}", current_n, n, current_n * n);
-                            current_n * n
-                        }
+                        Operation::Add => current_n - n,
+                        Operation::Sub => current_n + n,
+                        Operation::Mult => current_n / n,
+                        Operation::Div => current_n * n,
                     },
                 )
             } else if let P2Sol::Number(n) = *p2 {
                 calculate_unknown_n(
                     *p1,
                     match op {
-                        Operation::Add => {
-                            println!("{} - {} = {}", n, current_n, n - current_n);
-                            n - current_n
-                        }
-                        Operation::Sub => {
-                            println!("{} + {} = {}", n, current_n, n + current_n);
-                            n + current_n
-                        }
-                        Operation::Mult => {
-                            println!("{} / {} = {}", n, current_n, n / current_n);
-                            n / current_n
-                        }
-                        Operation::Div => {
-                            println!("{} * {} = {}", n, current_n, n * current_n);
-                            n * current_n
-                        }
+                        Operation::Add => n - current_n,
+                        Operation::Sub => n + current_n,
+                        Operation::Mult => n / current_n,
+                        Operation::Div => n * current_n,
                     },
                 )
             } else {
