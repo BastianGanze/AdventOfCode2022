@@ -31,7 +31,6 @@ impl SNAFU {
             max_n_pow
         };
         let mut rest = self.base_10;
-        println!("doing {:?}", (rest, pow));
         loop {
             if let Some(s) = match rest {
                 -2 => Some('='),
@@ -55,7 +54,6 @@ impl SNAFU {
             let c_pow_u_1 = SNAFU_BASE.pow(pow) as Sol;
             let c_pow_u_2 = c_pow_u_1 * 2;
             let c_pow_n_1 = SNAFU_BASE.pow(pow - 1) as Sol;
-            let c_pow_n_2 = c_pow_n_1 * 2;
 
             if rest <= 0 {
                 if rest.abs() <= c_pow_u_1 / 2 {
